@@ -1,9 +1,3 @@
-#!/usr/bin/env ruby
-# encoding: utf-8
-
-def getTypeOfPatch(patches, x, y)
-  patches.each do |patch|
-    if Integer(patch[0]) == x and Integer(patch[1]) == y
       return Integer(patch[2])
     end
   end
@@ -14,7 +8,7 @@ def generateDoors(external_walls)
   doors = []
   for i in 0..4
     random = rand(0..external_walls.length-1)
-	  element = external_walls[random][0] + " " + external_walls[random][1]
+    element = external_walls[random][0] + " " + external_walls[random][1]
     doors.push(element)
   end
   File.open("doors.plan", "w") { |f| f.puts(doors) }
@@ -59,7 +53,3 @@ def getExternalWalls(patches)
   end
   return external_walls
 end
-
-patches = getPatchesFromFile("school.plan")
-external_walls = getExternalWalls(patches)
-generateDoors(external_walls)
