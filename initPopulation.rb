@@ -1,17 +1,23 @@
-      return Integer(patch[2])
+#!/usr/bin/env ruby		
+# encoding: utf-8		
+		
+def getTypeOfPatch(patches, x, y)		
+  patches.each do |patch|		
+    if Integer(patch[0]) == x and Integer(patch[1]) == y
+			return Integer(patch[2])
     end
   end
 end
 
 #ubicar al azar 5 paredes
-def generateDoors(external_walls)
+def generateDoors(external_walls, output)
   doors = []
   for i in 0..4
     random = rand(0..external_walls.length-1)
     element = external_walls[random][0] + " " + external_walls[random][1]
     doors.push(element)
   end
-  File.open("doors.plan", "w") { |f| f.puts(doors) }
+  File.open(output, "w") { |f| f.puts(doors) }
 end
 
 def getPatchesFromFile(file)
@@ -53,3 +59,16 @@ def getExternalWalls(patches)
   end
   return external_walls
 end
+
+def generateSolution(file)
+  patches = getPatchesFromFile(file)
+  external_walls = getExternalWalls(patches)
+  generateDoors(external_walls, "doors.plan")
+end
+
+def testSolution()
+  exec("./netlogo-headless.sh --model escape4_v6.nlogo --experiment simulation --table -")
+end
+
+generateSolution("school.plan")
+testSolution()
