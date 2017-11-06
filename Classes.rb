@@ -111,7 +111,7 @@ class Solution
     generateFile("doors.plan")
     system(
       "./netlogo-headless.sh --model escape4_v6.nlogo --experiment simulation --table -")
-    @fitness = getData("seconds.output")[0]
+    @fitness = Integer(getData("seconds.output")[0][0])
   end
 
   def doors
