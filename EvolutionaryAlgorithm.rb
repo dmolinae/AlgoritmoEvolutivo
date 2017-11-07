@@ -12,7 +12,6 @@ population = Population.new.load("population.txt")
 		select = []
 	  k.times do
 			select.push(population.solutions[rand(0..population.solutions.length-1)])
-			#puts select[i].fitness
 		end
 
 		best = select[0]
@@ -44,12 +43,16 @@ population = Population.new.load("population.txt")
 	  children_doors = parents[i][0].doors[0..pcc-1] + parents[i+1][0].doors[pcc..4]
 	  new_solution = Solution.new(children_doors)
 	  new_solution.test
-	  crossover_population.solutions[parents[i][1]] = new_solution
+    if new_solution.fitness < crossover_population.solutions[parents[i][1]].fitness
+      crossover_population.solutions[parents[i][1]] = new_solution
+    end
 
 	  children_doors = parents[i+1][0].doors[0..pcc-1] + parents[i][0].doors[pcc..4]
 	  new_solution = Solution.new(children_doors)
 	  new_solution.test
-	  crossover_population.solutions[parents[i][1]] = new_solution
+    if new_solution.fitness < crossover_population.solutions[parents[i+1][1]].fitness
+      crossover_population.solutions[parents[i+1][1]] = new_solution
+    end
 	end
 
 	#MUTATION
@@ -76,16 +79,15 @@ population = Population.new.load("population.txt")
 	    end
 	    bool = selectedDoorsSolution.include? selectedEW
 	  end
-	  #puts random  
-	  #puts "#{selectedDoorsSolution}"
 	  selectedDoorsSolution[randomArrayPosition] = selectedEW
-	  #puts "#{selectedDoorsSolution}"
 	  
 	  #agregar a crossover_population.solution
 	  solution = Solution.new(selectedDoorsSolution)
 	  solution.test
-	  mutated_population.solutions[random] = solution
-	  #puts crossover_population.solutions[random].doors[0]
+
+    if solution.fitness < mutated_population.solutions[random].fitness
+      mutated_population.solutions[random] = solution
+    end
 	end
 
 	#REINSERTION
