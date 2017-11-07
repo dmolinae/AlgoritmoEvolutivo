@@ -1,14 +1,21 @@
 require_relative "Classes"
 
-population = Population.new.load("population.txt")
-#puts population.solutions[0].fitness
+population = Marshal.load(File.read("population.txt"))
+iterations = 5
+pc = 0.2
+pm = 0.15
+k = 3
 
-20.times do |z|
+populations = []
+iterations.times do |z|
+
+  population.setBestSolution
+  population.setFitnessAverage
+  populations.push(population)
 
 	#SELECTION
 	selected_solutions = []
 	population.solutions.length.times do
-		k = 3
 		select = []
 	  k.times do
 			select.push(population.solutions[rand(0..population.solutions.length-1)])
@@ -23,10 +30,13 @@ population = Population.new.load("population.txt")
 		end
 		selected_solutions.push(best)
 	end
-	selected_population = Population.new(selected_solutions)
+	selected_population = Population.new(
+    selected_solutions,
+    population.plan,
+    population.best,
+    population.average)
 
 	#CROSSOVER
-	pc = 0.4
 	number_parents = Integer(pc * selected_population.solutions.length)
 
 	parents = []
@@ -42,21 +52,15 @@ population = Population.new.load("population.txt")
 
 	  children_doors = parents[i][0].doors[0..pcc-1] + parents[i+1][0].doors[pcc..4]
 	  new_solution = Solution.new(children_doors)
-	  new_solution.test
-    if new_solution.fitness < crossover_population.solutions[parents[i][1]].fitness
-      crossover_population.solutions[parents[i][1]] = new_solution
-    end
+    crossover_population.solutions[parents[i][1]] = new_solution
 
 	  children_doors = parents[i+1][0].doors[0..pcc-1] + parents[i][0].doors[pcc..4]
 	  new_solution = Solution.new(children_doors)
-	  new_solution.test
-    if new_solution.fitness < crossover_population.solutions[parents[i+1][1]].fitness
-      crossover_population.solutions[parents[i+1][1]] = new_solution
-    end
+    
+    crossover_population.solutions[parents[i+1][1]] = new_solution
 	end
 
 	#MUTATION
-	pm=0.3
 	pcm=Integer(crossover_population.solutions.length*pm)
 
 	mutated_population = crossover_population
@@ -66,7 +70,7 @@ population = Population.new.load("population.txt")
 	  random = rand(0..crossover_population.solutions.length-1)
 	  randomDoorsSolution = crossover_population.solutions[random].doors
 	  #obtengo las paredes externas
-	  external_walls = Patches.new("school.plan").getExternalWalls()
+    external_walls = Patches.new(mutated_population.plan).getExternalWalls()
 	  bool = false
 	  randomEW = rand(0..external_walls.length-1)
 	  selectedEW = Door.new(external_walls[randomEW][0],external_walls[randomEW][1])
@@ -83,18 +87,20 @@ population = Population.new.load("population.txt")
 	  
 	  #agregar a crossover_population.solution
 	  solution = Solution.new(selectedDoorsSolution)
-	  solution.test
 
-    if solution.fitness < mutated_population.solutions[random].fitness
-      mutated_population.solutions[random] = solution
-    end
+    mutated_population.solutions[random] = solution
 	end
+
+  evaluated_population = mutated_population
+  evaluated_population.solutions.each do |solution|
+    solution.test
+  end
 
 	#REINSERTION
 	if z < 5
-		population = mutated_population
+		population = evaluated_population
 	else
-		combination = mutated_population.solutions + population.solutions
+		combination = evaluated_population.solutions + population.solutions
 		sort_array = []
 		combination.each do |solution|
 			sort_array.push([solution,solution.fitness])		
@@ -110,8 +116,8 @@ population = Population.new.load("population.txt")
 	end
 end
 
+population.solutions[0].doors
+population.solutions[0].generateFile("finalDoors.plan")
 
-
-
-
-
+Population.generateCSV(
+  iterations.to_s + "-Generations_PC:" + pc.to_s + "_PM:" + pm.to_s + ".csv",populations) 

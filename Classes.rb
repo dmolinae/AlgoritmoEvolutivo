@@ -124,12 +124,16 @@ class Solution
 end
 
 class Population
-  def initialize(solutions = [])
+  def initialize(solutions = [], plan = "", best = Solution.new, average = 0)
     @solutions = solutions
+    @plan = plan
+    @best = best
+    @average = average
   end
 
   def fromFile(file, size)
     @solutions = []
+    @plan = file
     external_walls = Patches.new(file).getExternalWalls()
     size.times do
       solution = Solution.new.generateFromExternalWalls(external_walls)
@@ -139,16 +143,49 @@ class Population
     return self
   end
 
-  def generateFile
-    File.open('population.txt', 'w') {|f| f.write(Marshal.dump(@solutions)) } 
+  def setBestSolution
+    @best = @solutions[0]
+    @solutions.each do |solution|
+      if solution.fitness < @best.fitness
+        @best = solution
+      end
+    end
   end
 
-  def load(file)
-    @solutions = Marshal.load(File.read(file))
-    return self
+  def setFitnessAverage
+    @average = 0
+    @solutions.each do |solution|
+      @average = @average + solution.fitness
+    end
+    @average = @average/@solutions.length
+  end
+
+  def generateFile
+    File.open('population.txt', 'w') {|f| f.write(Marshal.dump(self)) } 
+  end
+
+  def self.generateCSV(output, populations)
+    lines = [["n,max,average"]]
+    populations.each_with_index do |population, i|
+      element = i.to_s + "," + population.best.fitness.to_s + "," + population.average.to_s
+      lines.push(element)
+    end
+    File.open(output, "w") { |f| f.puts(lines) }
   end
 
   def solutions
     return @solutions
+  end
+
+  def average
+    return @average
+  end
+
+  def best
+    return @best
+  end
+
+  def plan
+    return @plan
   end
 end
