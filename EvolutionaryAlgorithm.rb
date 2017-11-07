@@ -25,3 +25,23 @@ for n in 0..(x-1)
 	#puts "#{selected_population}"
 end
 
+
+#REINSERTION
+z = 0
+if z < 3
+	population = new_population
+end
+else
+	combination = new_population + population
+	combination.solutions.each do |solution|
+		sort_array.push([solution,solution.fitness])		
+	end
+	sorted = sort_array.sort {|a,b| b[1] <=> a[1]}
+	sorted.take(20)
+	
+end
+	
+
+
+
+
