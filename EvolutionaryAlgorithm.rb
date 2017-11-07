@@ -1,18 +1,17 @@
 require_relative "Classes"
 
 population = Marshal.load(File.read("population.txt"))
-iterations = 5
+iterations = 40
 pc = 0.2
 pm = 0.15
-k = 3
+k = 8
 
 populations = []
+population.setBestSolution
+population.setFitnessAverage
+populations.push(population)
+
 iterations.times do |z|
-
-  population.setBestSolution
-  population.setFitnessAverage
-  populations.push(population)
-
 	#SELECTION
 	selected_solutions = []
 	population.solutions.length.times do
@@ -114,7 +113,11 @@ iterations.times do |z|
 	population.solutions.each do |solution|
 		puts solution.fitness
 	end
+
+  population.setBestSolution
+  population.setFitnessAverage
+  populations.push(population)
 end
 
 Population.generateCSV(
-  iterations.to_s + "-G_PC:" + pc.to_s + "_PM:" + pm.to_s + "_K:" + k.to_s + ".csv",populations) 
+  iterations.to_s + "-Generations_K:" + k.to_s + "_Plan:" + population.plan + ".csv",populations) 
