@@ -116,8 +116,5 @@ iterations.times do |z|
 	end
 end
 
-population.solutions[0].doors
-population.solutions[0].generateFile("finalDoors.plan")
-
 Population.generateCSV(
-  iterations.to_s + "-Generations_PC:" + pc.to_s + "_PM:" + pm.to_s + ".csv",populations) 
+  iterations.to_s + "-G_PC:" + pc.to_s + "_PM:" + pm.to_s + "_K:" + k.to_s + ".csv",populations) 

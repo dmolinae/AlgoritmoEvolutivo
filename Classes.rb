@@ -153,11 +153,11 @@ class Population
   end
 
   def setFitnessAverage
-    @average = 0
+    sum = 0
     @solutions.each do |solution|
-      @average = @average + solution.fitness
+      sum = sum + solution.fitness
     end
-    @average = @average/@solutions.length
+    @average = sum/@solutions.length
   end
 
   def generateFile
@@ -165,7 +165,7 @@ class Population
   end
 
   def self.generateCSV(output, populations)
-    lines = [["n,max,average"]]
+    lines = [["n,best,average"]]
     populations.each_with_index do |population, i|
       element = i.to_s + "," + population.best.fitness.to_s + "," + population.average.to_s
       lines.push(element)
