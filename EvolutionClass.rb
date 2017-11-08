@@ -144,9 +144,8 @@ class Evolution
       end
       sorted = sort_array.sort {|a,b| a[1] <=> b[1]}
 
-      new_solutions = sorted.take(20).map { |e| e[0] }
+      return sorted.take(20).map { |e| e[0] }
     end
-    return new_solutions
   end
 end
 
