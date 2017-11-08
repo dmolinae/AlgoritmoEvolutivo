@@ -32,7 +32,15 @@ class Evolution
       new_population.setBestSolution
       new_population.setFitnessAverage
       
+      puts "Generation: " + i.to_s
+      print(new_population.solutions)
       @populations.push(new_population)
+    end
+  end
+
+  def print(solutions)
+    solutions.each do |solution|
+      puts solution.fitness
     end
   end
 
@@ -127,7 +135,7 @@ class Evolution
 
   def reinsertion(i, old_solutions, new_solutions)
     if i < @iterations - 5
-      new_solutions = old_solutions
+      return new_solutions
     else
       combination = old_solutions + new_solutions
       sort_array = []
