@@ -2,7 +2,10 @@ require_relative "RepresentationClasses"
 
 class Evolution
   def initialize(init_population, k, pc, pm, iterations)
-    @init_population = init_population
+    @init_population = Population.new(
+      init_population.solutions,
+      init_population.plan
+    )
     @k = k
     @pc = pc
     @pm = pm
@@ -20,7 +23,7 @@ class Evolution
       mutated_solutions = mutation(crossover_solutions)
 
       mutated_solutions.each do |solution|
-        solution.test
+        solution.test(@init_population.plan)
       end
       
       new_solutions = reinsertion(i, @populations[i].solutions, mutated_solutions)

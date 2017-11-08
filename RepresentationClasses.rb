@@ -116,7 +116,8 @@ class Solution
     return data
   end
 
-  def test
+  def test(plan)
+    system("cp " + plan + " plan.plan")
     generateDoorsFile("doors.plan")
     system(
       "./netlogo-headless.sh --model escape4_v6.nlogo --experiment simulation --table -")
@@ -146,7 +147,7 @@ class Population
     external_walls = Patches.new(file).getExternalWalls()
     size.times do
       solution = Solution.new.generateFromExternalWalls(external_walls)
-      solution.test
+      solution.test(@plan)
       @solutions.push(solution)
     end
     return self
@@ -154,7 +155,7 @@ class Population
 
   def testSolutions
     @solutions.each do |solution|
-      solution.test
+      solution.test(@plan)
     end
   end
 
