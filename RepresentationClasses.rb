@@ -88,13 +88,22 @@ class Solution
     return self
   end
 
-  def generateFile(output)
-    doors = []
+  def isDoorIn(new_door)
+    @doors.each do |door|
+      if new_door.x == door.x and new_door.y == door.y
+        return true
+      end
+    end
+    return false
+  end
+
+  def generateDoorsFile(output)
+    line = []
     for i in 0..4
       element = @doors[i].x + " " + @doors[i].y
-      doors.push(element)
+      line.push(element)
     end
-    File.open(output, "w") { |f| f.puts(doors) }
+    File.open(output, "w") { |f| f.puts(line) }
   end
 
   def getData(file)
@@ -108,7 +117,7 @@ class Solution
   end
 
   def test
-    generateFile("doors.plan")
+    generateDoorsFile("doors.plan")
     system(
       "./netlogo-headless.sh --model escape4_v6.nlogo --experiment simulation --table -")
     @fitness = Integer(getData("seconds.output")[0][0])
@@ -143,6 +152,12 @@ class Population
     return self
   end
 
+  def testSolutions
+    @solutions.each do |solution|
+      solution.test
+    end
+  end
+
   def setBestSolution
     @best = @solutions[0]
     @solutions.each do |solution|
@@ -164,15 +179,6 @@ class Population
     File.open('population.txt', 'w') {|f| f.write(Marshal.dump(self)) } 
   end
 
-  def self.generateCSV(output, populations)
-    lines = [["n,best,average"]]
-    populations.each_with_index do |population, i|
-      element = i.to_s + "," + population.best.fitness.to_s + "," + population.average.to_s
-      lines.push(element)
-    end
-    File.open(output, "w") { |f| f.puts(lines) }
-  end
-
   def solutions
     return @solutions
   end
@@ -189,3 +195,5 @@ class Population
     return @plan
   end
 end
+
+

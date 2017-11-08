@@ -1,4 +1,4 @@
-require_relative "Classes"
+require_relative "RepresentationClasses"
 
-population = Population.new.fromFile("office.plan",20)
+population = Population.new.fromFile("conference.plan",20)
 population.generateFile
