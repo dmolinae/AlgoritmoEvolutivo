@@ -1,12 +1,37 @@
 require_relative "Classes"
 
-population = Marshal.load(File.read("population.txt"))
 iterations = 40
 pc = 0.2
 pm = 0.15
-k_array = [3,5,8]
+k_array = [3,8,12]
+
+def selection(population, k)
+  solutions = population.solutions
+  plan = population.plan
+
+  selected_solutions = []
+
+  solutions.length.times do
+    select = []
+    k.times do
+      select.push(solutions[rand(0..solutions.length-1)])
+    end
+
+    best = select[0]
+    for j in 1..(k-1)
+      if best.fitness > select[j].fitness
+        best = select[j]
+      end
+    end
+    selected_solutions.push(best)
+  end
+  return Population.new(
+    selected_solutions,
+    plan)
+end
 
 for k in k_array do
+  population = Marshal.load(File.read("population.txt"))
 
   populations = []
   population.setBestSolution
@@ -14,26 +39,6 @@ for k in k_array do
   populations.push(population)
 
   iterations.times do |z|
-    #SELECTION
-    selected_solutions = []
-    population.solutions.length.times do
-      select = []
-      k.times do
-        select.push(population.solutions[rand(0..population.solutions.length-1)])
-      end
-
-      best = select[0]
-
-      for j in 1..(k-1)
-        if best.fitness > select[j].fitness
-          best = select[j]
-        end
-      end
-      selected_solutions.push(best)
-    end
-    selected_population = Population.new(
-      selected_solutions,
-      population.plan)
 
     #CROSSOVER
     number_parents = Integer(pc * selected_population.solutions.length)
